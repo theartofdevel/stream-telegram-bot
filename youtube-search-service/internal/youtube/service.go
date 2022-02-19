@@ -32,8 +32,10 @@ func (s *service) FindTrackByName(ctx context.Context, trackName string) (string
 		return "", err
 	}
 
-	a := responseData["items"].([]interface{})
-	b := a[0].(map[string]interface{})["id"].(map[string]interface{})["videoId"].(string)
-
-	return fmt.Sprintf("https://music.youtube.com/watch?v=%s", b), nil
+	if a, ok := responseData["items"].([]interface{}); ok {
+		b := a[0].(map[string]interface{})["id"].(map[string]interface{})["videoId"].(string)
+		return fmt.Sprintf("https://youtube.com/watch?v=%s", b), nil
+	} else {
+		return "", fmt.Errorf("youtube request failed due to error %v", responseData)
+	}
 }

@@ -23,24 +23,25 @@ type Config struct {
 		Username string `yaml:"username" env:"ST-BOT-RabbitUsername" env-required:"true"`
 		Password string `yaml:"password" env:"ST-BOT-RabbitPassword" env-required:"true"`
 		Consumer struct {
-			Youtube            string `yaml:"youtube" env:"ST-BOT-RabbitConsumeYoutube" env-required:"true"`
-			Imgur              string `yaml:"imgur" env:"ST-BOT-RabbitConsumeImgur" env-required:"true"`
+			Queue              string `yaml:"queue" env:"ST-BOT-RabbitConsumerQueue" env-required:"true"`
 			MessagesBufferSize int    `yaml:"messages_buff_size" env:"ST-BOT-RabbitConsumerMBS" env-default:"100"`
 		} `yaml:"consumer" env-required:"true"`
 		Producer struct {
-			Youtube string `yaml:"youtube" env:"ST-BOT-RabbitProducerYoutube" env-required:"true"`
-			Imgur   string `yaml:"imgur" env:"ST-BOT-RabbitProducerImgur" env-required:"true"`
+			Queue string `yaml:"queue" env:"ST-BOT-RabbitProducerQueue" env-required:"true"`
 		} `yaml:"producer" env-required:"true"`
 	}
+	Imgur struct {
+		AccessToken  string `yaml:"access_token" env:"ST-BOT-ImgurAccessToken" env-required:"true"`
+		ClientSecret string `yaml:"client_secret" env:"ST-BOT-ImgurClientSecret" env-required:"true"`
+		ClientID     string `yaml:"client_id" env:"ST-BOT-ImgurClientID" env-required:"true"`
+		URL          string `yaml:"url" env:"ST-BOT-ImgurURL" env-required:"true"`
+	} `yaml:"imgur"`
 	AppConfig AppConfig `yaml:"app" env-required:"true"`
 }
 
 type AppConfig struct {
-	EventWorkers struct {
-		Youtube int `yaml:"youtube" env:"ST-BOT-EventWorksYT" env-default:"3" env-required:"true"`
-		Imgur   int `yaml:"imgur" env:"ST-BOT-EventWorksImgur" env-default:"3" env-required:"true"`
-	} `yaml:"event_workers"`
-	LogLevel string `yaml:"log_level" env:"ST-BOT-LogLevel" env-default:"error" env-required:"true"`
+	EventWorkers int    `yaml:"event_workers" env:"ST-BOT-EventWorks" env-default:"3" env-required:"true"`
+	LogLevel     string `yaml:"log_level" env:"ST-BOT-LogLevel" env-default:"error" env-required:"true"`
 }
 
 var instance *Config

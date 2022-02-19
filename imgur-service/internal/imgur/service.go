@@ -1,11 +1,11 @@
-package service
+package imgur
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/theartofdevel/telegram_bot/pkg/client/imgur"
-	"github.com/theartofdevel/telegram_bot/pkg/logging"
+	"github.com/theartofdevel/imgur-service/pkg/client/imgur"
+	"github.com/theartofdevel/imgur-service/pkg/logging"
 )
 
 type imgurService struct {
@@ -13,11 +13,11 @@ type imgurService struct {
 	logger *logging.Logger
 }
 
-func NewImgurService(client imgur.Client, logger *logging.Logger) ImgurService {
+func NewImgurService(client imgur.Client, logger *logging.Logger) Service {
 	return &imgurService{client: client, logger: logger}
 }
 
-type ImgurService interface {
+type Service interface {
 	ShareImage(ctx context.Context, image []byte) (string, error)
 }
 

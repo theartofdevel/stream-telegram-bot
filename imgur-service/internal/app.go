@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/cors"
-	"github.com/theartofdevel/youtube-search-service/internal/config"
-	"github.com/theartofdevel/youtube-search-service/internal/events"
-	youtubeService "github.com/theartofdevel/youtube-search-service/internal/youtube"
-	"github.com/theartofdevel/youtube-search-service/pkg/client/mq/rabbitmq"
-	"github.com/theartofdevel/youtube-search-service/pkg/client/youtube"
-	"github.com/theartofdevel/youtube-search-service/pkg/logging"
-	"github.com/theartofdevel/youtube-search-service/pkg/shutdown"
+	"github.com/theartofdevel/imgur-service/internal/config"
+	"github.com/theartofdevel/imgur-service/internal/events"
+	imgurService "github.com/theartofdevel/imgur-service/internal/imgur"
+	"github.com/theartofdevel/imgur-service/pkg/client/imgur"
+	"github.com/theartofdevel/imgur-service/pkg/client/mq/rabbitmq"
+	"github.com/theartofdevel/imgur-service/pkg/logging"
+	"github.com/theartofdevel/imgur-service/pkg/shutdown"
 	"net"
 	"net/http"
 	"os"
@@ -22,11 +22,11 @@ import (
 )
 
 type app struct {
-	cfg            *config.Config
-	logger         *logging.Logger
-	httpServer     *http.Server
-	youtubeService youtubeService.Service
-	router         *httprouter.Router
+	cfg        *config.Config
+	logger     *logging.Logger
+	httpServer *http.Server
+	service    imgurService.Service
+	router     *httprouter.Router
 }
 
 type App interface {
@@ -37,14 +37,14 @@ func NewApp(logger *logging.Logger, cfg *config.Config) (App, error) {
 	logger.Println("router initializing")
 	router := httprouter.New()
 
-	ytClient := youtube.NewClient(cfg.Youtube.APIURL, cfg.Youtube.AccessToken, &http.Client{})
-	yts := youtubeService.NewService(ytClient, logger)
+	imgurClient := imgur.NewClient(cfg.Imgur.URL, cfg.Imgur.AccessToken, cfg.Imgur.ClientID, &http.Client{})
+	imgurService := imgurService.NewImgurService(imgurClient, logger)
 
 	return &app{
-		cfg:            cfg,
-		logger:         logger,
-		youtubeService: yts,
-		router:         router,
+		cfg:     cfg,
+		logger:  logger,
+		service: imgurService,
+		router:  router,
 	}, nil
 }
 
@@ -89,12 +89,8 @@ func (a *app) startConsume() {
 		a.logger.Fatal(err)
 	}
 
-	client := http.Client{}
-	ytClient := youtube.NewClient(a.cfg.Youtube.APIURL, a.cfg.Youtube.AccessToken, &client)
-	ytService := youtubeService.NewService(ytClient, a.logger)
-
 	for i := 0; i < a.cfg.AppConfig.EventWorkers; i++ {
-		worker := events.NewWorker(i, consumer, a.cfg.RabbitMQ.Producer.Queue, producer, messages, a.logger, ytService)
+		worker := events.NewWorker(i, consumer, a.cfg.RabbitMQ.Producer.Queue, producer, messages, a.logger, a.service)
 
 		go worker.Process()
 		a.logger.Infof("Event Worker #%d started", i)

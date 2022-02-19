@@ -2,13 +2,13 @@ package internal
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/theartofdevel/telegram_bot/internal/config"
 	"github.com/theartofdevel/telegram_bot/internal/events"
-	"github.com/theartofdevel/telegram_bot/internal/service"
-	"github.com/theartofdevel/telegram_bot/pkg/client/imgur"
+	"github.com/theartofdevel/telegram_bot/internal/events/imgur"
+	"github.com/theartofdevel/telegram_bot/internal/events/youtube"
+	"github.com/theartofdevel/telegram_bot/internal/service/bot"
 	"github.com/theartofdevel/telegram_bot/pkg/client/mq"
 	"github.com/theartofdevel/telegram_bot/pkg/client/mq/rabbitmq"
 	"github.com/theartofdevel/telegram_bot/pkg/logging"
@@ -18,12 +18,13 @@ import (
 )
 
 type app struct {
-	cfg          *config.Config
-	logger       *logging.Logger
-	httpServer   *http.Server
-	imgurService service.ImgurService
-	bot          *tele.Bot
-	producer     mq.Producer
+	cfg                    *config.Config
+	logger                 *logging.Logger
+	httpServer             *http.Server
+	producer               mq.Producer
+	youtubeProcessStrategy events.ProcessEventStrategy
+	imgurProcessStrategy   events.ProcessEventStrategy
+	bot                    *tele.Bot
 }
 
 type App interface {
@@ -31,22 +32,21 @@ type App interface {
 }
 
 func NewApp(logger *logging.Logger, cfg *config.Config) (App, error) {
-
-	client := http.Client{}
-	imgurClient := imgur.NewClient(cfg.Imgur.URL, cfg.Imgur.AccessToken, cfg.Imgur.ClientID, &client)
-	imgurService := service.NewImgurService(imgurClient, logger)
-
 	return &app{
-		cfg:          cfg,
-		logger:       logger,
-		imgurService: imgurService,
+		cfg:                    cfg,
+		logger:                 logger,
+		youtubeProcessStrategy: youtube.NewYouTubeProcessEventStrategy(logger),
+		imgurProcessStrategy:   imgur.NewImgurProcessEventStrategy(logger),
 	}, nil
 }
 
 func (a *app) Run() {
-	a.startBot()
+	bot, err := a.createBot()
+	if err != nil {
+		return
+	}
+	a.bot = bot
 	a.startConsume()
-	// TODO fixMe
 	a.bot.Start()
 }
 
@@ -77,46 +77,74 @@ func (a *app) startConsume() {
 		a.logger.Fatal(err)
 	}
 
-	messages, err := consumer.Consume(a.cfg.RabbitMQ.Consumer.Queue)
+	err = consumer.DeclareQueue(a.cfg.RabbitMQ.Consumer.Youtube, true, false, false, nil)
+	if err != nil {
+		a.logger.Fatal(err)
+	}
+	ytMessages, err := consumer.Consume(a.cfg.RabbitMQ.Consumer.Youtube)
 	if err != nil {
 		a.logger.Fatal(err)
 	}
 
-	for i := 0; i < a.cfg.AppConfig.EventWorkers; i++ {
-		worker := events.NewWorker(i, consumer, a.bot, producer, messages, a.logger)
+	botService := bot.Service{
+		Bot:    a.bot,
+		Logger: a.logger,
+	}
+
+	for i := 0; i < a.cfg.AppConfig.EventWorkers.Youtube; i++ {
+		worker := events.NewWorker(i, consumer, a.youtubeProcessStrategy, botService, producer, ytMessages, a.logger)
 
 		go worker.Process()
-		a.logger.Infof("Event Worker #%d started", i)
+		a.logger.Infof("YouTube Event Worker #%d started", i)
+	}
+
+	err = consumer.DeclareQueue(a.cfg.RabbitMQ.Consumer.Imgur, true, false, false, nil)
+	if err != nil {
+		a.logger.Fatal(err)
+	}
+	imgurMessages, err := consumer.Consume(a.cfg.RabbitMQ.Consumer.Imgur)
+	if err != nil {
+		a.logger.Fatal(err)
+	}
+
+	for i := 0; i < a.cfg.AppConfig.EventWorkers.Imgur; i++ {
+		worker := events.NewWorker(i, consumer, a.imgurProcessStrategy, botService, producer, imgurMessages, a.logger)
+
+		go worker.Process()
+		a.logger.Infof("Imgur Event Worker #%d started", i)
 	}
 
 	a.producer = producer
 }
 
-func (a *app) startBot() {
+func (a *app) createBot() (abot *tele.Bot, botErr error) {
 	pref := tele.Settings{
 		Token:   a.cfg.Telegram.Token,
 		Poller:  &tele.LongPoller{Timeout: 60 * time.Second},
 		Verbose: false,
 		OnError: a.OnBotError,
 	}
-	var botErr error
-	a.bot, botErr = tele.NewBot(pref)
+	abot, botErr = tele.NewBot(pref)
 	if botErr != nil {
 		a.logger.Fatal(botErr)
 		return
 	}
 
-	a.bot.Handle("/yt", func(c tele.Context) error {
+	abot.Handle("/help", func(c tele.Context) error {
+		return c.Send(fmt.Sprintf("/yt - find youtube track by name\nupload photo with compressions and get imgur short url"))
+	})
+
+	abot.Handle("/yt", func(c tele.Context) error {
 		trackName := c.Message().Payload
 
-		request := events.SearchTrackRequest{
+		request := youtube.SearchTrackRequest{
 			RequestID: fmt.Sprintf("%d", c.Sender().ID),
 			Name:      trackName,
 		}
 
 		marshal, _ := json.Marshal(request)
 
-		err := a.producer.Publish(a.cfg.RabbitMQ.Producer.Queue, marshal)
+		err := a.producer.Publish(a.cfg.RabbitMQ.Producer.Youtube, marshal)
 		if err != nil {
 			return c.Send(fmt.Sprintf("ошибка: %s", err.Error()))
 		}
@@ -124,10 +152,10 @@ func (a *app) startBot() {
 		return c.Send(fmt.Sprintf("Заявка принята"))
 	})
 
-	a.bot.Handle(tele.OnPhoto, func(c tele.Context) error {
+	abot.Handle(tele.OnPhoto, func(c tele.Context) error {
 		// Photos only.
 		photo := c.Message().Photo
-		file, err := a.bot.File(&photo.File)
+		file, err := abot.File(&photo.File)
 		if err != nil {
 			return c.Send("Не удалось скачать изображение")
 		}
@@ -142,13 +170,22 @@ func (a *app) startBot() {
 			return c.Send("Лимит 10МБ")
 		}
 
-		image, err := a.imgurService.ShareImage(context.Background(), buf.Bytes())
-		if err != nil {
-			return c.Send("Не удалось залить изображение")
+		request := imgur.UploadImageRequest{
+			RequestID: fmt.Sprintf("%d", c.Sender().ID),
+			Photo:     buf.Bytes(),
 		}
 
-		return c.Send(image)
+		marshal, _ := json.Marshal(request)
+
+		err = a.producer.Publish(a.cfg.RabbitMQ.Producer.Imgur, marshal)
+		if err != nil {
+			return c.Send(fmt.Sprintf("ошибка: %s", err.Error()))
+		}
+
+		return c.Send(fmt.Sprintf("Заявка принята"))
 	})
+
+	return
 }
 
 func (a *app) OnBotError(err error, ctx tele.Context) {
