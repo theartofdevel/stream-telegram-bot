@@ -1,1 +1,4 @@
 .DS_Store
+youtube-search-service/app/configs/dev.yml
+telegram_bot/app/configs/dev.yml
+imgur-service/app/configs/dev.yml

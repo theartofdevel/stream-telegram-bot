@@ -4,8 +4,6 @@ go 1.17
 
 require (
 	github.com/ilyakaznacheev/cleanenv v1.2.6
-	github.com/julienschmidt/httprouter v1.3.0
-	github.com/rs/cors v1.8.2
 	github.com/sirupsen/logrus v1.8.1
 	github.com/streadway/amqp v1.0.0
 )

@@ -1,0 +1,164 @@
+name: Build and Publish Docker Images
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  REGISTRY_USER: theartofdevel
+  BOT_IMAGE_NAME: bot
+  IMGUR_IMAGE_NAME: imgur
+  YT_IMAGE_NAME: yt
+  DOCKER_NETWORK: bot_network
+  RABBITMQ_DEFAULT_USER: guest
+  RABBITMQ_DEFAULT_PASS: ${}
+
+jobs:
+  check:
+    name: Check changed files
+    outputs:
+      imgur: ${{ steps.check_files.outputs.imgur }}
+      bot: ${{ steps.check_files.outputs.bot }}
+      yt: ${{ steps.check_files.outputs.yt }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: check modified files
+        id: check_files
+        run: |
+            echo "=============== list modified files ==============="
+            git diff --name-only HEAD^ HEAD
+
+            echo "========== check paths of modified files =========="
+            git diff --name-only HEAD^ HEAD > files.txt
+            while IFS= read -r file; do
+              echo $file
+              if [[ $file == imgur-service/* ]]; then
+                echo "::set-output name=imgur::true"
+              elif [[ $file == telegram_bot/* ]]; then
+                echo "::set-output name=bot::true"
+              elif [[ $file == youtube-search-service/* ]]; then
+                echo "::set-output name=yt::true"
+              else
+                echo "file does not belong to any service"
+              fi
+            done < files.txt
+
+  bot:
+    needs: check
+    if: needs.check.outputs.bot == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.5
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1.10.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ secrets.REG_GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3.5.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.BOT_IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2.7.0
+        with:
+          context: .
+          file: ./telegram_bot/Dockerfile_github
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Deploy bot
+        uses: dawidd6/action-ansible-playbook@v2.5.0
+        with:
+          playbook: deploy.yml
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          options: |
+            --inventory ansible/inventory
+            --extra-vars app_name=stream-bot
+            --extra-vars container_image=${{ steps.meta.outputs.tags }}
+            --extra-vars registry=${{ env.REGISTRY }}
+            --extra-vars registry_user=${{ env.REGISTRY_USER }}
+            --extra-vars registry_password=${{ secrets.REG_GITHUB_TOKEN }}
+            --extra-vars ansible_ssh_port=${{ secrets.SSH_PORT }}
+            --extra-vars ansible_ssh_user=${{ secrets.SSH_USER }}
+            --extra-vars ansible_become_user=${{ secrets.ANSIBLE_BECOME_USER }}
+            --extra-vars ansible_become_password=${{ secrets.ANSIBLE_BECOME_PASSWORD }}
+            --extra-vars docker_network=${{ env.DOCKER_NETWORK }}
+            --diff
+            --verbose
+        env:
+          ANSIBLE_CONFIG: ansible/ansible.cfg
+
+
+  yt:
+    needs: check
+    if: needs.check.outputs.yt == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.5
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1.10.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ secrets.REG_GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3.5.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.YT_IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2.7.0
+        with:
+          context: .
+          file: ./youtube-search-service/Dockerfile_github
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+  
+  imgur:
+    needs: check
+    if: needs.check.outputs.imgur == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.5
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1.10.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ secrets.REG_GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3.5.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMGUR_IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2.7.0
+        with:
+          context: .
+          file: ./imgur-service/Dockerfile_github
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

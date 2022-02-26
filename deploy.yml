@@ -1,0 +1,36 @@
+---
+- hosts: kartservice
+  gather_facts: false
+  vars:
+    _container_name: "{{ app_name }}"
+
+  tasks:
+    - name: "Create network"
+      become: true
+      community.docker.docker_network:
+        name: "{{ api_docker_network }}"
+        
+    - name: "Login to GitHub Container Registry"
+      become: true
+      community.docker.docker_login:
+        registry_url: "{{ registry }}"
+        username: "{{ registry_user }}"
+        password: "{{ registry_password }}"
+
+    - name: "Deploy app container"
+      become: true
+      community.docker.docker_container:
+        name: "{{ _container_name }}"
+        hostname: "{{ _container_name }}"
+        image: "{{ container_image }}"
+        state: "started"
+        restart_policy: "always"
+        pull: true
+        networks:
+          - name: "{{ docker_network }}"
+            aliases:
+              - "{{ app_name }}"
+        log_driver: "json-file"
+        log_options:
+          max-size: "10m"
+          max-file: "3"

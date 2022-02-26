@@ -1,0 +1,32 @@
+---
+- hosts: karservice
+  gather_facts: false
+  vars:
+    _container_name: "{{ app_name }}"
+  tasks:
+    - name: "Create network"
+      become: true
+      community.docker.docker_network:
+        name: "{{ docker_network }}"
+
+    - name: "Deploy container"
+      become: true
+      community.docker.docker_container:
+        name: "{{ _container_name }}"
+        hostname: "{{ _container_name }}"
+        image: "rabbitmq:3-management"
+        state: "started"
+        restart_policy: "always"
+        ports:
+          - "15672:15672"
+        networks:
+          - name: "{{ docker_network }}"
+            aliases:
+              - "{{ _container_name }}"
+        log_driver: "json-file"
+        log_options:
+          max-size: "20m"
+          max-file: "3"
+        env:
+          RABBITMQ_DEFAULT_USER: "{{ rabbitmq_default_user }}"
+          RABBITMQ_DEFAULT_PASS: "{{ rabbitmq_default_password }}"
