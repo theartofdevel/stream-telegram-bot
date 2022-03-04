@@ -1,3 +1,5 @@
+#syntax=docker/dockerfile:1.2
+
 FROM golang:1.16.5-alpine3.14 AS builder
 
 WORKDIR /usr/local/go/src/
@@ -5,23 +7,42 @@ WORKDIR /usr/local/go/src/
 ADD app/ /usr/local/go/src/
 
 RUN go clean --modcache
-RUN go build -mod=readonly -o appb cmd/main/app.go
+RUN go build -mod=readonly -o app cmd/main/app.go
+
+FROM alpine:3.14
+
+COPY --from=builder /usr/local/go/src/app /
 
 RUN --mount=type=secret,id=ST_BOT_IS_DEBUG \
+  cat /run/secrets/ST_BOT_IS_DEBUG \
   --mount=type=secret,id=ST_BOT_IS_DEVELOPMENT \
+  cat /run/secrets/ST_BOT_IS_DEVELOPMENT \
   --mount=type=secret,id=ST_BOT_TELEGRAM_TOKEN \
+  cat /run/secrets/ST_BOT_TELEGRAM_TOKEN \
   --mount=type=secret,id=ST_BOT_RABBIT_HOST \
+  cat /run/secrets/ST_BOT_RABBIT_HOST \
   --mount=type=secret,id=ST_BOT_RABBIT_PORT \
+  cat /run/secrets/ST_BOT_RABBIT_PORT \
   --mount=type=secret,id=ST_BOT_RABBIT_USERNAME \
+  cat /run/secrets/ST_BOT_RABBIT_USERNAME \
   --mount=type=secret,id=ST_BOT_RABBIT_PASSWORD \
+  cat /run/secrets/ST_BOT_RABBIT_PASSWORD \
   --mount=type=secret,id=ST_BOT_RABBIT_CONSUMER_YOUTUBE \
+  cat /run/secrets/ST_BOT_RABBIT_CONSUMER_YOUTUBE \
   --mount=type=secret,id=ST_BOT_RABBIT_CONSUMER_IMGUR \
+  cat /run/secrets/ST_BOT_RABBIT_CONSUMER_IMGUR \
   --mount=type=secret,id=ST_BOT_RABBIT_CONSUMER_MBS \
+  cat /run/secrets/ST_BOT_RABBIT_CONSUMER_MBS \
   --mount=type=secret,id=ST_BOT_RABBIT_PRODUCER_YOUTUBE \
+  cat /run/secrets/ST_BOT_RABBIT_PRODUCER_YOUTUBE \
   --mount=type=secret,id=ST_BOT_RABBIT_PRODUCER_IMGUR \
+  cat /run/secrets/ST_BOT_RABBIT_PRODUCER_IMGUR \
   --mount=type=secret,id=ST_BOT_EVENT_WORKERS_YT \
+  cat /run/secrets/ST_BOT_EVENT_WORKERS_YT \
   --mount=type=secret,id=ST_BOT_EVENT_WORKERS_IMGUR \
+  cat /run/secrets/ST_BOT_EVENT_WORKERS_IMGUR \
   --mount=type=secret,id=ST_BOT_LOG_LEVEL \
+  cat /run/secrets/ST_BOT_LOG_LEVEL \
     export ST_BOT_IS_DEBUG=$(cat /run/secrets/ST_BOT_IS_DEBUG) && \
     export ST_BOT_IS_DEVELOPMENT=$(cat /run/secrets/ST_BOT_IS_DEVELOPMENT) && \
     export ST_BOT_TELEGRAM_TOKEN=$(cat /run/secrets/ST_BOT_TELEGRAM_TOKEN) && \
@@ -38,4 +59,4 @@ RUN --mount=type=secret,id=ST_BOT_IS_DEBUG \
     export ST_BOT_EVENT_WORKERS_IMGUR=$(cat /run/secrets/ST_BOT_EVENT_WORKERS_IMGUR) && \
     export ST_BOT_LOG_LEVEL=$(cat /run/secrets/ST_BOT_LOG_LEVEL)
 
-CMD ["/usr/local/go/src/appb"]
+CMD ["/app"]
