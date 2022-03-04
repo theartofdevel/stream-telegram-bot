@@ -7,8 +7,8 @@ import (
 )
 
 type Config struct {
-	IsDebug       bool `env:"YTS_IS_DEBUG" env-default:"false"  env-required:"true"`
-	IsDevelopment bool `env:"YTS_IS_DEVELOPMENT" env-default:"false" env-required:"true"`
+	IsDebug       bool `env:"YTS_IS_DEBUG" env-default:"false"`
+	IsDevelopment bool `env:"YTS_IS_DEVELOPMENT" env-default:"false"`
 	YouTube       struct {
 		APIURL          string `env:"YTS_YT_API_URL" env-required:"true"`
 		RefreshTokenURL string `env:"YTS_YT_RefreshTokenURL" env-required:"true"`
@@ -38,8 +38,8 @@ type Config struct {
 }
 
 type AppConfig struct {
-	EventWorkers int    `env:"YTS_EVENT_WORKERS" env-default:"3" env-required:"true"`
-	LogLevel     string `env:"YTS_LOG_LEVEL" env-default:"error" env-required:"true"`
+	EventWorkers int    `env:"YTS_EVENT_WORKERS" env-default:"3"`
+	LogLevel     string `env:"YTS_LOG_LEVEL" env-default:"error"`
 }
 
 var instance *Config

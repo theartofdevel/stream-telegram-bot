@@ -65,5 +65,4 @@ RUN --mount=type=secret,id=ST_BOT_IS_DEBUG \
     cat /run/secrets/ST_BOT_LOG_LEVEL > /s/ST_BOT_LOG_LEVEL
 
 
-
 CMD ["/entrypoint.sh"]
