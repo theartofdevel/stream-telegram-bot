@@ -130,6 +130,10 @@ func (a *app) createBot() (abot *tele.Bot, botErr error) {
 		return
 	}
 
+	abot.Handle("/start", func(c tele.Context) error {
+		return c.Send(fmt.Sprintf("/yt - find youtube track by name\nupload photo with compressions and get imgur short url"))
+	})
+
 	abot.Handle("/help", func(c tele.Context) error {
 		return c.Send(fmt.Sprintf("/yt - find youtube track by name\nupload photo with compressions and get imgur short url"))
 	})
