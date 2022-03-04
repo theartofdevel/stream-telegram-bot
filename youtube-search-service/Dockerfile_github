@@ -78,7 +78,7 @@ RUN --mount=type=secret,id=YTS_YT_APIKEY \
     cat /run/secrets/YTS_Rabbit_PRODUCERQUEUE > /s/YTS_Rabbit_PRODUCERQUEUE && \
     export YTS_EVENT_WORKERS=$(cat /run/secrets/YTS_EVENT_WORKERS) && \
     cat /run/secrets/YTS_EVENT_WORKERS > /s/YTS_EVENT_WORKERS && \
-    export YTS_LOG_LEVEL=$(cat /run/secrets/YTS_LOG_LEVEL)
+    export YTS_LOG_LEVEL=$(cat /run/secrets/YTS_LOG_LEVEL) && \
     cat /run/secrets/YTS_LOG_LEVEL > /s/YTS_LOG_LEVEL
 
 CMD ["/entrypoint.sh"]

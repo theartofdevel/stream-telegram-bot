@@ -1,5 +1,6 @@
 #!/bin/sh
 
+export IS_IS_DEBUG=$(cat /s/IS_IS_DEBUG)
 export IS_IS_DEVELOPMENT=$(cat /s/IS_IS_DEVELOPMENT)
 export IS_RABBIT_HOST=$(cat /s/IS_RABBIT_HOST)
 export IS_RABBIT_PORT=$(cat /s/IS_RABBIT_PORT)

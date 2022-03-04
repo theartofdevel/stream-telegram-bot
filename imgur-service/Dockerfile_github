@@ -59,7 +59,7 @@ RUN --mount=type=secret,id=IS_IS_DEBUG \
     cat /run/secrets/IS_IMGUR_URL > /s/IS_IMGUR_URL && \
     export IS_EVENTWORKS=$(cat /run/secrets/IS_EVENTWORKS) && \
     cat /run/secrets/IS_EVENTWORKS > /s/IS_EVENTWORKS && \
-    export IS_LOGLEVEL=$(cat /run/secrets/IS_LOGLEVEL)
+    export IS_LOGLEVEL=$(cat /run/secrets/IS_LOGLEVEL) && \
     cat /run/secrets/IS_LOGLEVEL > /s/IS_LOGLEVEL
 
 CMD ["/entrypoint.sh"]
