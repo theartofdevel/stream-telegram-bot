@@ -82,7 +82,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           secrets: |
-            "ST_BOT_IS_DEBUG=${{ secrets.IS_DEBUG }}"
+            "st_bot_is_debug=${{ secrets.IS_DEBUG }}"
             "ST_BOT_IS_DEVELOPMENT=${{ secrets.IS_DEV }}"
             "ST_BOT_TELEGRAM_TOKEN=${{ secrets.ST_BOT_TELEGRAM_TOKEN }}"
             "ST_BOT_RABBIT_HOST=${{ secrets.RABBIT_HOST }}"
