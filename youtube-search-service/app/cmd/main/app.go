@@ -1,24 +1,15 @@
 package main
 
 import (
-	"flag"
 	"github.com/theartofdevel/youtube-search-service/internal"
 	"github.com/theartofdevel/youtube-search-service/internal/config"
 	"github.com/theartofdevel/youtube-search-service/pkg/logging"
 	"log"
 )
 
-var cfgPath string
-
-func init() {
-	flag.StringVar(&cfgPath, "config", "configs/prod.yml", "config file path")
-}
-
 func main() {
-	flag.Parse()
-
 	log.Print("config initializing")
-	cfg := config.GetConfig(cfgPath)
+	cfg := config.GetConfig()
 
 	log.Print("logger initializing")
 	logging.Init(cfg.AppConfig.LogLevel)

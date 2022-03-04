@@ -39,13 +39,11 @@ type AppConfig struct {
 var instance *Config
 var once sync.Once
 
-func GetConfig(path string) *Config {
+func GetConfig() *Config {
 	once.Do(func() {
-		log.Printf("read application config in path %s", path)
-
 		instance = &Config{}
 
-		if err := cleanenv.ReadConfig(path, instance); err != nil {
+		if err := cleanenv.ReadEnv(instance); err != nil {
 			help, _ := cleanenv.GetDescription(instance, nil)
 			log.Print(help)
 			log.Fatal(err)
