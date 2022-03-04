@@ -25,22 +25,21 @@ RUN --mount=type=secret,id=ST_BOT_IS_DEBUG \
   --mount=type=secret,id=ST_BOT_RABBIT_PRODUCER_IMGUR,dst=/run/secrets/ST_BOT_RABBIT_PRODUCER_IMGUR \
   --mount=type=secret,id=ST_BOT_EVENT_WORKERS_YT,dst=/run/secrets/ST_BOT_EVENT_WORKERS_YT \
   --mount=type=secret,id=ST_BOT_EVENT_WORKERS_IMGUR,dst=/run/secrets/ST_BOT_EVENT_WORKERS_IMGUR \
-  --mount=type=secret,id=ST_BOT_LOG_LEVEL,dst=/run/secrets/ST_BOT_LOG_LEVEL
-
-ENV ST_BOT_IS_DEBUG=$(cat /run/secrets/ST_BOT_IS_DEBUG)
-ENV ST_BOT_IS_DEVELOPMENT=$(cat /run/secrets/ST_BOT_IS_DEVELOPMENT)
-ENV ST_BOT_TELEGRAM_TOKEN=$(cat /run/secrets/ST_BOT_TELEGRAM_TOKEN)
-ENV ST_BOT_RABBIT_HOST=$(cat /run/secrets/ST_BOT_RABBIT_HOST)
-ENV ST_BOT_RABBIT_PORT=$(cat /run/secrets/ST_BOT_RABBIT_PORT)
-ENV ST_BOT_RABBIT_USERNAME=$(cat /run/secrets/ST_BOT_RABBIT_USERNAME)
-ENV ST_BOT_RABBIT_PASSWORD=$(cat /run/secrets/ST_BOT_RABBIT_PASSWORD)
-ENV ST_BOT_RABBIT_CONSUMER_YOUTUBE=$(cat /run/secrets/ST_BOT_RABBIT_CONSUMER_YOUTUBE)
-ENV ST_BOT_RABBIT_CONSUMER_IMGUR=$(cat /run/secrets/ST_BOT_RABBIT_CONSUMER_IMGUR)
-ENV ST_BOT_RABBIT_CONSUMER_MBS=$(cat /run/secrets/ST_BOT_RABBIT_CONSUMER_MBS)
-ENV ST_BOT_RABBIT_PRODUCER_YOUTUBE=$(cat /run/secrets/ST_BOT_RABBIT_PRODUCER_YOUTUBE)
-ENV ST_BOT_RABBIT_PRODUCER_IMGUR=$(cat /run/secrets/ST_BOT_RABBIT_PRODUCER_IMGUR)
-ENV ST_BOT_EVENT_WORKERS_YT=$(cat /run/secrets/ST_BOT_EVENT_WORKERS_YT)
-ENV ST_BOT_EVENT_WORKERS_IMGUR=$(cat /run/secrets/ST_BOT_EVENT_WORKERS_IMGUR)
-ENV ST_BOT_LOG_LEVEL=$(cat /run/secrets/ST_BOT_LOG_LEVEL)
+  --mount=type=secret,id=ST_BOT_LOG_LEVEL,dst=/run/secrets/ST_BOT_LOG_LEVEL \
+    export ST_BOT_IS_DEBUG=$(cat /run/secrets/ST_BOT_IS_DEBUG) && \
+    export ST_BOT_IS_DEVELOPMENT=$(cat /run/secrets/ST_BOT_IS_DEVELOPMENT) && \
+    export ST_BOT_TELEGRAM_TOKEN=$(cat /run/secrets/ST_BOT_TELEGRAM_TOKEN) && \
+    export ST_BOT_RABBIT_HOST=$(cat /run/secrets/ST_BOT_RABBIT_HOST) && \
+    export ST_BOT_RABBIT_PORT=$(cat /run/secrets/ST_BOT_RABBIT_PORT) && \
+    export ST_BOT_RABBIT_USERNAME=$(cat /run/secrets/ST_BOT_RABBIT_USERNAME) && \
+    export ST_BOT_RABBIT_PASSWORD=$(cat /run/secrets/ST_BOT_RABBIT_PASSWORD) && \
+    export ST_BOT_RABBIT_CONSUMER_YOUTUBE=$(cat /run/secrets/ST_BOT_RABBIT_CONSUMER_YOUTUBE) && \
+    export ST_BOT_RABBIT_CONSUMER_IMGUR=$(cat /run/secrets/ST_BOT_RABBIT_CONSUMER_IMGUR) && \
+    export ST_BOT_RABBIT_CONSUMER_MBS=$(cat /run/secrets/ST_BOT_RABBIT_CONSUMER_MBS) && \
+    export ST_BOT_RABBIT_PRODUCER_YOUTUBE=$(cat /run/secrets/ST_BOT_RABBIT_PRODUCER_YOUTUBE) && \
+    export ST_BOT_RABBIT_PRODUCER_IMGUR=$(cat /run/secrets/ST_BOT_RABBIT_PRODUCER_IMGUR) && \
+    export ST_BOT_EVENT_WORKERS_YT=$(cat /run/secrets/ST_BOT_EVENT_WORKERS_YT) && \
+    export ST_BOT_EVENT_WORKERS_IMGUR=$(cat /run/secrets/ST_BOT_EVENT_WORKERS_IMGUR) && \
+    export ST_BOT_LOG_LEVEL=$(cat /run/secrets/ST_BOT_LOG_LEVEL)
 
 CMD ["/app"]
