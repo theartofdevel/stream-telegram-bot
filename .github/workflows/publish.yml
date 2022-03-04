@@ -262,3 +262,30 @@ jobs:
             --verbose
         env:
           ANSIBLE_CONFIG: ansible.cfg
+
+  rabbitmq:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.5
+
+      - name: Deploy RabbitMQ
+        uses: dawidd6/action-ansible-playbook@v2.5.0
+        with:
+          playbook: rabbitmq.yml
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          options: |
+            --inventory inventory
+            --extra-vars app_name=${{ env.RABBITMQ_DEFAULT_HOST }}
+            --extra-vars ansible_ssh_port=${{ secrets.SSH_PORT }}
+            --extra-vars ansible_ssh_user=${{ secrets.SSH_USER }}
+            --extra-vars ansible_become_user=${{ secrets.ANSIBLE_BECOME_USER }}
+            --extra-vars ansible_become_password=${{ secrets.ANSIBLE_BECOME_PASSWORD }}
+            --extra-vars docker_network=${{ env.DOCKER_NETWORK }}
+            --extra-vars rabbitmq_default_user=${{ env.RABBITMQ_DEFAULT_USER }}
+            --extra-vars rabbitmq_default_password=${{ env.RABBITMQ_DEFAULT_PASS }}
+            --diff
+            --verbose
+        env:
+          ANSIBLE_CONFIG: ansible.cfg
