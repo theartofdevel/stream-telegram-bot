@@ -162,3 +162,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          secrets: |
+            "IS_IS_DEBUG=${{ secrets.IS_IS_DEBUG }}"
