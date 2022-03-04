@@ -61,7 +61,7 @@ RUN --mount=type=secret,id=ST_BOT_IS_DEBUG \
     cat /run/secrets/ST_BOT_EVENT_WORKERS_YT > /s/ST_BOT_EVENT_WORKERS_YT && \
     export ST_BOT_EVENT_WORKERS_IMGUR=$(cat /run/secrets/ST_BOT_EVENT_WORKERS_IMGUR) && \
     cat /run/secrets/ST_BOT_EVENT_WORKERS_IMGUR > /s/ST_BOT_EVENT_WORKERS_IMGUR && \
-    export ST_BOT_LOG_LEVEL=$(cat /run/secrets/ST_BOT_LOG_LEVEL)
+    export ST_BOT_LOG_LEVEL=$(cat /run/secrets/ST_BOT_LOG_LEVEL) && \
     cat /run/secrets/ST_BOT_LOG_LEVEL > /s/ST_BOT_LOG_LEVEL
 
 
