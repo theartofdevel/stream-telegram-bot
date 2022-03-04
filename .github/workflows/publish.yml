@@ -104,7 +104,7 @@ jobs:
           playbook: deploy.yml
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           options: |
-            --inventory ansible/inventory
+            --inventory inventory
             --extra-vars app_name=${{ env.BOT_IMAGE_NAME }}
             --extra-vars container_image=${{ steps.meta.outputs.tags }}
             --extra-vars registry=${{ env.REGISTRY }}
@@ -118,7 +118,7 @@ jobs:
             --diff
             --verbose
         env:
-          ANSIBLE_CONFIG: ansible/ansible.cfg
+          ANSIBLE_CONFIG: ansible.cfg
 
 
   yt:
@@ -179,7 +179,7 @@ jobs:
           playbook: deploy.yml
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           options: |
-            --inventory ansible/inventory
+            --inventory inventory
             --extra-vars app_name=${{ env.YT_IMAGE_NAME }}
             --extra-vars container_image=${{ steps.meta.outputs.tags }}
             --extra-vars registry=${{ env.REGISTRY }}
@@ -193,7 +193,7 @@ jobs:
             --diff
             --verbose
         env:
-          ANSIBLE_CONFIG: ansible/ansible.cfg
+          ANSIBLE_CONFIG: ansible.cfg
 
   imgur:
     needs: check
@@ -247,7 +247,7 @@ jobs:
           playbook: deploy.yml
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           options: |
-            --inventory ansible/inventory
+            --inventory inventory
             --extra-vars app_name=${{ env.IMGUR_IMAGE_NAME }}
             --extra-vars container_image=${{ steps.meta.outputs.tags }}
             --extra-vars registry=${{ env.REGISTRY }}
@@ -261,4 +261,4 @@ jobs:
             --diff
             --verbose
         env:
-          ANSIBLE_CONFIG: ansible/ansible.cfg
+          ANSIBLE_CONFIG: ansible.cfg
