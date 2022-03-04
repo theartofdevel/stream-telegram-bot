@@ -12,20 +12,20 @@ FROM alpine:3.14
 COPY --from=builder /usr/local/go/src/app /
 
 RUN --mount=type=secret,id=IS_IS_DEBUG \
-  --mount=type=secret,id=IS_IS_DEVELOPMENT \
-  --mount=type=secret,id=IS_RABBIT_HOST \
-  --mount=type=secret,id=IS_RABBIT_PORT \
-  --mount=type=secret,id=IS_RABBIT_USERNAME \
-  --mount=type=secret,id=IS_RABBIT_PASSWORD \
-  --mount=type=secret,id=IS_RABBIT_CONSUMER_QUEUE \
-  --mount=type=secret,id=IS_RABBIT_CONSUMER_MBS \
-  --mount=type=secret,id=IS_RABBIT_PRODUCER_QUEUE \
-  --mount=type=secret,id=IS_IMGUR_ACCESS_TOKEN \
-  --mount=type=secret,id=IS_IMGUR_CLIENT_SECRET \
-  --mount=type=secret,id=IS_IMGUR_CLIENT_ID \
-  --mount=type=secret,id=IS_IMGUR_URL \
-  --mount=type=secret,id=IS_EVENTWORKS \
-  --mount=type=secret,id=IS_LOGLEVEL \
+  --mount=type=secret,id=IS_IS_DEVELOPMENT,dst=/etc/secrets/IS_IS_DEVELOPMENT \
+  --mount=type=secret,id=IS_RABBIT_HOST,dst=/etc/secrets/IS_RABBIT_HOST \
+  --mount=type=secret,id=IS_RABBIT_PORT,dst=/etc/secrets/IS_RABBIT_PORT \
+  --mount=type=secret,id=IS_RABBIT_USERNAME,dst=/etc/secrets/IS_RABBIT_USERNAME \
+  --mount=type=secret,id=IS_RABBIT_PASSWORD,dst=/etc/secrets/IS_RABBIT_PASSWORD \
+  --mount=type=secret,id=IS_RABBIT_CONSUMER_QUEUE,dst=/etc/secrets/IS_RABBIT_CONSUMER_QUEUE \
+  --mount=type=secret,id=IS_RABBIT_CONSUMER_MBS,dst=/etc/secrets/IS_RABBIT_CONSUMER_MBS \
+  --mount=type=secret,id=IS_RABBIT_PRODUCER_QUEUE,dst=/etc/secrets/IS_RABBIT_PRODUCER_QUEUE \
+  --mount=type=secret,id=IS_IMGUR_ACCESS_TOKEN,dst=/etc/secrets/IS_IMGUR_ACCESS_TOKEN \
+  --mount=type=secret,id=IS_IMGUR_CLIENT_SECRET,dst=/etc/secrets/IS_IMGUR_CLIENT_SECRET \
+  --mount=type=secret,id=IS_IMGUR_CLIENT_ID,dst=/etc/secrets/IS_IMGUR_CLIENT_ID \
+  --mount=type=secret,id=IS_IMGUR_URL,dst=/etc/secrets/IS_IMGUR_URL \
+  --mount=type=secret,id=IS_EVENTWORKS,dst=/etc/secrets/IS_EVENTWORKS \
+  --mount=type=secret,id=IS_LOGLEVEL,dst=/etc/secrets/IS_LOGLEVEL \
     export IS_IS_DEBUG=$(cat /run/secrets/IS_IS_DEBUG) && \
     export IS_IS_DEVELOPMENT=$(cat /run/secrets/IS_IS_DEVELOPMENT) && \
     export IS_RABBIT_HOST=$(cat /run/secrets/IS_RABBIT_HOST) && \
