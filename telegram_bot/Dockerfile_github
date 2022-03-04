@@ -5,9 +5,7 @@ WORKDIR /usr/local/go/src/
 ADD app/ /usr/local/go/src/
 
 RUN go clean --modcache
-RUN go build -mod=readonly -o /usr/local/go/src/app cmd/main/app.go
-
-COPY /usr/local/go/src/app /app
+RUN go build -mod=readonly -o appb cmd/main/app.go
 
 RUN --mount=type=secret,id=ST_BOT_IS_DEBUG \
   --mount=type=secret,id=ST_BOT_IS_DEVELOPMENT \
@@ -40,4 +38,4 @@ RUN --mount=type=secret,id=ST_BOT_IS_DEBUG \
     export ST_BOT_EVENT_WORKERS_IMGUR=$(cat /run/secrets/ST_BOT_EVENT_WORKERS_IMGUR) && \
     export ST_BOT_LOG_LEVEL=$(cat /run/secrets/ST_BOT_LOG_LEVEL)
 
-CMD ["/app"]
+CMD ["/usr/local/go/src/appb"]
