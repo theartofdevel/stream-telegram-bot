@@ -13,6 +13,9 @@ FROM alpine:3.14
 
 COPY --from=builder /usr/local/go/src/app /
 
+COPY entrypoint.sh /
+RUN chmod +x entrypoint.sh
+
 RUN mkdir /s
 
 RUN --mount=type=secret,id=ST_BOT_IS_DEBUG \
@@ -35,26 +38,32 @@ RUN --mount=type=secret,id=ST_BOT_IS_DEBUG \
     export ST_BOT_IS_DEVELOPMENT=$(cat /run/secrets/ST_BOT_IS_DEVELOPMENT) && \
     cat /run/secrets/ST_BOT_IS_DEVELOPMENT > /s/ST_BOT_IS_DEVELOPMENT && \
     export ST_BOT_TELEGRAM_TOKEN=$(cat /run/secrets/ST_BOT_TELEGRAM_TOKEN) && \
+    cat /run/secrets/ST_BOT_TELEGRAM_TOKEN > /s/ST_BOT_TELEGRAM_TOKEN && \
     export ST_BOT_RABBIT_HOST=$(cat /run/secrets/ST_BOT_RABBIT_HOST) && \
+    cat /run/secrets/ST_BOT_RABBIT_HOST > /s/ST_BOT_RABBIT_HOST && \
     export ST_BOT_RABBIT_PORT=$(cat /run/secrets/ST_BOT_RABBIT_PORT) && \
+    cat /run/secrets/ST_BOT_RABBIT_PORT > /s/ST_BOT_RABBIT_PORT && \
     export ST_BOT_RABBIT_USERNAME=$(cat /run/secrets/ST_BOT_RABBIT_USERNAME) && \
+    cat /run/secrets/ST_BOT_RABBIT_USERNAME > /s/ST_BOT_RABBIT_USERNAME && \
     export ST_BOT_RABBIT_PASSWORD=$(cat /run/secrets/ST_BOT_RABBIT_PASSWORD) && \
+    cat /run/secrets/ST_BOT_RABBIT_PASSWORD > /s/ST_BOT_RABBIT_PASSWORD && \
     export ST_BOT_RABBIT_CONSUMER_YOUTUBE=$(cat /run/secrets/ST_BOT_RABBIT_CONSUMER_YOUTUBE) && \
+    cat /run/secrets/ST_BOT_RABBIT_CONSUMER_YOUTUBE > /s/ST_BOT_RABBIT_CONSUMER_YOUTUBE && \
     export ST_BOT_RABBIT_CONSUMER_IMGUR=$(cat /run/secrets/ST_BOT_RABBIT_CONSUMER_IMGUR) && \
+    cat /run/secrets/ST_BOT_RABBIT_CONSUMER_IMGUR > /s/ST_BOT_RABBIT_CONSUMER_IMGUR && \
     export ST_BOT_RABBIT_CONSUMER_MBS=$(cat /run/secrets/ST_BOT_RABBIT_CONSUMER_MBS) && \
+    cat /run/secrets/ST_BOT_RABBIT_CONSUMER_MBS > /s/ST_BOT_RABBIT_CONSUMER_MBS && \
     export ST_BOT_RABBIT_PRODUCER_YOUTUBE=$(cat /run/secrets/ST_BOT_RABBIT_PRODUCER_YOUTUBE) && \
+    cat /run/secrets/ST_BOT_RABBIT_PRODUCER_YOUTUBE > /s/ST_BOT_RABBIT_PRODUCER_YOUTUBE && \
     export ST_BOT_RABBIT_PRODUCER_IMGUR=$(cat /run/secrets/ST_BOT_RABBIT_PRODUCER_IMGUR) && \
+    cat /run/secrets/ST_BOT_RABBIT_PRODUCER_IMGUR > /s/ST_BOT_RABBIT_PRODUCER_IMGUR && \
     export ST_BOT_EVENT_WORKERS_YT=$(cat /run/secrets/ST_BOT_EVENT_WORKERS_YT) && \
+    cat /run/secrets/ST_BOT_EVENT_WORKERS_YT > /s/ST_BOT_EVENT_WORKERS_YT && \
     export ST_BOT_EVENT_WORKERS_IMGUR=$(cat /run/secrets/ST_BOT_EVENT_WORKERS_IMGUR) && \
+    cat /run/secrets/ST_BOT_EVENT_WORKERS_IMGUR > /s/ST_BOT_EVENT_WORKERS_IMGUR && \
     export ST_BOT_LOG_LEVEL=$(cat /run/secrets/ST_BOT_LOG_LEVEL)
+    cat /run/secrets/ST_BOT_LOG_LEVEL > /s/ST_BOT_LOG_LEVEL
 
-RUN echo $ST_BOT_IS_DEBUG
-RUN echo $ST_BOT_IS_DEVELOPMENT
-RUN cat /s/ST_BOT_IS_DEBUG
-RUN cat /s/ST_BOT_IS_DEVELOPMENT
-RUN export ST_BOT_IS_DEBUG=$(cat /s/ST_BOT_IS_DEBUG)
-RUN export ST_BOT_IS_DEVELOPMENT=$(cat /s/ST_BOT_IS_DEVELOPMENT)
-RUN echo $ST_BOT_IS_DEBUG
-RUN echo $ST_BOT_IS_DEVELOPMENT
 
-CMD ["/app"]
+
+CMD ["/entrypoint.sh"]
