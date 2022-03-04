@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export YTS_YT_APIKEY=$(cat /s/YTS_YT_APIKEY)
+export YTS_YT_APIKey=$(cat /s/YTS_YT_APIKey)
 export YTS_IS_DEBUG=$(cat /s/YTS_IS_DEBUG)
 export YTS_IS_DEVELOPMENT=$(cat /s/YTS_IS_DEVELOPMENT)
 export YTS_YT_API_URL=$(cat /s/YTS_YT_API_URL)
