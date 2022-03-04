@@ -11,6 +11,11 @@ FROM alpine:3.14
 
 COPY --from=builder /usr/local/go/src/app /
 
+COPY entrypoint.sh /
+RUN chmod +x entrypoint.sh
+
+RUN mkdir /s
+
 RUN --mount=type=secret,id=IS_IS_DEBUG \
   --mount=type=secret,id=IS_IS_DEVELOPMENT \
   --mount=type=secret,id=IS_RABBIT_HOST \
@@ -27,19 +32,34 @@ RUN --mount=type=secret,id=IS_IS_DEBUG \
   --mount=type=secret,id=IS_EVENTWORKS \
   --mount=type=secret,id=IS_LOGLEVEL \
     export IS_IS_DEBUG=$(cat /run/secrets/IS_IS_DEBUG) && \
+    cat /run/secrets/IS_IS_DEBUG > /s/IS_IS_DEBUG && \
     export IS_IS_DEVELOPMENT=$(cat /run/secrets/IS_IS_DEVELOPMENT) && \
+    cat /run/secrets/IS_IS_DEVELOPMENT > /s/IS_IS_DEVELOPMENT && \
     export IS_RABBIT_HOST=$(cat /run/secrets/IS_RABBIT_HOST) && \
+    cat /run/secrets/IS_RABBIT_HOST > /s/IS_RABBIT_HOST && \
     export IS_RABBIT_PORT=$(cat /run/secrets/IS_RABBIT_PORT) && \
+    cat /run/secrets/IS_RABBIT_PORT > /s/IS_RABBIT_PORT && \
     export IS_RABBIT_USERNAME=$(cat /run/secrets/IS_RABBIT_USERNAME) && \
+    cat /run/secrets/IS_RABBIT_USERNAME > /s/IS_RABBIT_USERNAME && \
     export IS_RABBIT_PASSWORD=$(cat /run/secrets/IS_RABBIT_PASSWORD) && \
+    cat /run/secrets/IS_RABBIT_PASSWORD > /s/IS_RABBIT_PASSWORD && \
     export IS_RABBIT_CONSUMER_QUEUE=$(cat /run/secrets/IS_RABBIT_CONSUMER_QUEUE) && \
+    cat /run/secrets/IS_RABBIT_CONSUMER_QUEUE > /s/IS_RABBIT_CONSUMER_QUEUE && \
     export IS_RABBIT_CONSUMER_MBS=$(cat /run/secrets/IS_RABBIT_CONSUMER_MBS) && \
+    cat /run/secrets/IS_RABBIT_CONSUMER_MBS > /s/IS_RABBIT_CONSUMER_MBS && \
     export IS_RABBIT_PRODUCER_QUEUE=$(cat /run/secrets/IS_RABBIT_PRODUCER_QUEUE) && \
+    cat /run/secrets/IS_RABBIT_PRODUCER_QUEUE > /s/IS_RABBIT_PRODUCER_QUEUE && \
     export IS_IMGUR_ACCESS_TOKEN=$(cat /run/secrets/IS_IMGUR_ACCESS_TOKEN) && \
+    cat /run/secrets/IS_IMGUR_ACCESS_TOKEN > /s/IS_IMGUR_ACCESS_TOKEN && \
     export IS_IMGUR_CLIENT_SECRET=$(cat /run/secrets/IS_IMGUR_CLIENT_SECRET) && \
+    cat /run/secrets/IS_IMGUR_CLIENT_SECRET > /s/IS_IMGUR_CLIENT_SECRET && \
     export IS_IMGUR_CLIENT_ID=$(cat /run/secrets/IS_IMGUR_CLIENT_ID) && \
+    cat /run/secrets/IS_IMGUR_CLIENT_ID > /s/IS_IMGUR_CLIENT_ID && \
     export IS_IMGUR_URL=$(cat /run/secrets/IS_IMGUR_URL) && \
+    cat /run/secrets/IS_IMGUR_URL > /s/IS_IMGUR_URL && \
     export IS_EVENTWORKS=$(cat /run/secrets/IS_EVENTWORKS) && \
+    cat /run/secrets/IS_EVENTWORKS > /s/IS_EVENTWORKS && \
     export IS_LOGLEVEL=$(cat /run/secrets/IS_LOGLEVEL)
+    cat /run/secrets/IS_LOGLEVEL > /s/IS_LOGLEVEL
 
-CMD ["/app"]
+CMD ["/entrypoint.sh"]
