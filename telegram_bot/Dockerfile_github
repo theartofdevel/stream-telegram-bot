@@ -29,7 +29,7 @@ RUN --mount=type=secret,id=ST_BOT_IS_DEBUG \
   --mount=type=secret,id=ST_BOT_EVENT_WORKERS_IMGUR \
   --mount=type=secret,id=ST_BOT_LOG_LEVEL \
     export ST_BOT_IS_DEBUG=$(cat /run/secrets/ST_BOT_IS_DEBUG) && \
-    echo $ST_BOT_IS_DEBUG && \
+    cat /run/secrets/ST_BOT_IS_DEBUG && \
     export ST_BOT_IS_DEVELOPMENT=$(cat /run/secrets/ST_BOT_IS_DEVELOPMENT) && \
     export ST_BOT_TELEGRAM_TOKEN=$(cat /run/secrets/ST_BOT_TELEGRAM_TOKEN) && \
     export ST_BOT_RABBIT_HOST=$(cat /run/secrets/ST_BOT_RABBIT_HOST) && \
