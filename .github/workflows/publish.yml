@@ -8,10 +8,10 @@ on:
 env:
   REGISTRY: ghcr.io
   REGISTRY_USER: theartofdevel
-  BOT_IMAGE_NAME: bot
-  IMGUR_IMAGE_NAME: imgur
-  YT_IMAGE_NAME: yt
-  DOCKER_NETWORK: bot_network
+  BOT_IMAGE_NAME: tb-bot
+  IMGUR_IMAGE_NAME: tb-imgur
+  YT_IMAGE_NAME: tb-yt
+  DOCKER_NETWORK: tb-bot_network
   RABBITMQ_DEFAULT_HOST: ${{ secrets.RABBIT_HOST }}
   RABBITMQ_DEFAULT_PORT: ${{ secrets.RABBIT_PORT }}
   RABBITMQ_DEFAULT_USER: ${{ secrets.RABBIT_USERNAME }}
