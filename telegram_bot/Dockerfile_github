@@ -13,6 +13,8 @@ FROM alpine:3.14
 
 COPY --from=builder /usr/local/go/src/app /
 
+RUN mkdir /s
+
 RUN --mount=type=secret,id=ST_BOT_IS_DEBUG \
   --mount=type=secret,id=ST_BOT_IS_DEVELOPMENT \
   --mount=type=secret,id=ST_BOT_TELEGRAM_TOKEN \
