@@ -168,9 +168,9 @@ jobs:
             "YTS_RABBIT_USERNAME=${{ secrets.RABBIT_USERNAME }}"
             "YTS_RABBIT_PASSWORD=${{ secrets.RABBIT_PASSWORD }}"
             "YTS_RABBIT_CONSUMER_QUEUE=${{ secrets.YTS_RABBIT_CONSUMER_QUEUE }}"
-            "YTS_RABBIT_CONSUMER_MBS=${{ secrets.YTS_RABBIT_CONSUMER_MBS }}"
+            "YTS_RABBIT_CONSUMER_MBS=${{ secrets.RABBIT_CONSUMER_MBS }}"
             "YTS_Rabbit_PRODUCERQUEUE=${{ secrets.YTS_Rabbit_PRODUCERQUEUE }}"
-            "YTS_EVENT_WORKERS=${{ secrets.YTS_EVENT_WORKERS }}"
+            "YTS_EVENT_WORKERS=${{ secrets.EVENT_WORKERS }}"
             "YTS_LOG_LEVEL=${{ secrets.LOG_LEVEL }}"
 
       - name: Deploy yt
@@ -232,13 +232,13 @@ jobs:
             "IS_RABBIT_USERNAME=${{ secrets.RABBIT_USERNAME }}"
             "IS_RABBIT_PASSWORD=${{ secrets.RABBIT_PASSWORD }}"
             "IS_RABBIT_CONSUMER_QUEUE=${{ secrets.IS_RABBIT_CONSUMER_QUEUE }}"
-            "IS_RABBIT_CONSUMER_MBS=${{ secrets.IS_RABBIT_CONSUMER_MBS }}"
+            "IS_RABBIT_CONSUMER_MBS=${{ secrets.RABBIT_CONSUMER_MBS }}"
             "IS_RABBIT_PRODUCER_QUEUE=${{ secrets.IS_RABBIT_PRODUCER_QUEUE }}"
             "IS_IMGUR_ACCESS_TOKEN=${{ secrets.IS_IMGUR_ACCESS_TOKEN }}"
             "IS_IMGUR_CLIENT_SECRET=${{ secrets.IS_IMGUR_CLIENT_SECRET }}"
             "IS_IMGUR_CLIENT_ID=${{ secrets.IS_IMGUR_CLIENT_ID }}"
             "IS_IMGUR_URL=${{ secrets.IS_IMGUR_URL }}"
-            "IS_EVENTWORKS=${{ secrets.IS_EVENTWORKS }}"
+            "IS_EVENTWORKS=${{ secrets.EVENT_WORKERS }}"
             "IS_LOGLEVEL=${{ secrets.LOGLEVEL }}"
 
       - name: Deploy imgur
