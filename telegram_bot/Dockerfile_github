@@ -11,22 +11,22 @@ FROM alpine:3.14
 
 COPY --from=builder /usr/local/go/src/app /
 
-RUN --mount=type=secret,id=ST_BOT_IS_DEBUG \
-  --mount=type=secret,id=ST_BOT_IS_DEVELOPMENT,dst=/run/secrets/ST_BOT_IS_DEVELOPMENT \
-  --mount=type=secret,id=ST_BOT_TELEGRAM_TOKEN,dst=/run/secrets/ST_BOT_TELEGRAM_TOKEN \
-  --mount=type=secret,id=ST_BOT_RABBIT_HOST,dst=/run/secrets/ST_BOT_RABBIT_HOST \
-  --mount=type=secret,id=ST_BOT_RABBIT_PORT,dst=/run/secrets/ST_BOT_RABBIT_PORT \
-  --mount=type=secret,id=ST_BOT_RABBIT_USERNAME,dst=/run/secrets/ST_BOT_RABBIT_USERNAME \
-  --mount=type=secret,id=ST_BOT_RABBIT_PASSWORD,dst=/run/secrets/ST_BOT_RABBIT_PASSWORD \
-  --mount=type=secret,id=ST_BOT_RABBIT_CONSUMER_YOUTUBE,dst=/run/secrets/ST_BOT_RABBIT_CONSUMER_YOUTUBE \
-  --mount=type=secret,id=ST_BOT_RABBIT_CONSUMER_IMGUR,dst=/run/secrets/ST_BOT_RABBIT_CONSUMER_IMGUR \
-  --mount=type=secret,id=ST_BOT_RABBIT_CONSUMER_MBS,dst=/run/secrets/ST_BOT_RABBIT_CONSUMER_MBS \
-  --mount=type=secret,id=ST_BOT_RABBIT_PRODUCER_YOUTUBE,dst=/run/secrets/ST_BOT_RABBIT_PRODUCER_YOUTUBE \
-  --mount=type=secret,id=ST_BOT_RABBIT_PRODUCER_IMGUR,dst=/run/secrets/ST_BOT_RABBIT_PRODUCER_IMGUR \
-  --mount=type=secret,id=ST_BOT_EVENT_WORKERS_YT,dst=/run/secrets/ST_BOT_EVENT_WORKERS_YT \
-  --mount=type=secret,id=ST_BOT_EVENT_WORKERS_IMGUR,dst=/run/secrets/ST_BOT_EVENT_WORKERS_IMGUR \
-  --mount=type=secret,id=ST_BOT_LOG_LEVEL,dst=/run/secrets/ST_BOT_LOG_LEVEL \
-    export ST_BOT_IS_DEBUG=$(cat /run/secrets/ST_BOT_IS_DEBUG) && \
+RUN --mount=type=secret,id=st_bot_is_debug \
+  --mount=type=secret,id=ST_BOT_IS_DEVELOPMENT \
+  --mount=type=secret,id=ST_BOT_TELEGRAM_TOKEN \
+  --mount=type=secret,id=ST_BOT_RABBIT_HOST \
+  --mount=type=secret,id=ST_BOT_RABBIT_PORT \
+  --mount=type=secret,id=ST_BOT_RABBIT_USERNAME \
+  --mount=type=secret,id=ST_BOT_RABBIT_PASSWORD \
+  --mount=type=secret,id=ST_BOT_RABBIT_CONSUMER_YOUTUBE \
+  --mount=type=secret,id=ST_BOT_RABBIT_CONSUMER_IMGUR \
+  --mount=type=secret,id=ST_BOT_RABBIT_CONSUMER_MBS \
+  --mount=type=secret,id=ST_BOT_RABBIT_PRODUCER_YOUTUBE \
+  --mount=type=secret,id=ST_BOT_RABBIT_PRODUCER_IMGUR \
+  --mount=type=secret,id=ST_BOT_EVENT_WORKERS_YT \
+  --mount=type=secret,id=ST_BOT_EVENT_WORKERS_IMGUR \
+  --mount=type=secret,id=ST_BOT_LOG_LEVEL \
+    export ST_BOT_IS_DEBUG=$(cat /run/secrets/st_bot_is_debug) && \
     export ST_BOT_IS_DEVELOPMENT=$(cat /run/secrets/ST_BOT_IS_DEVELOPMENT) && \
     export ST_BOT_TELEGRAM_TOKEN=$(cat /run/secrets/ST_BOT_TELEGRAM_TOKEN) && \
     export ST_BOT_RABBIT_HOST=$(cat /run/secrets/ST_BOT_RABBIT_HOST) && \
