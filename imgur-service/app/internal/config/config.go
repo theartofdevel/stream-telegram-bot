@@ -7,8 +7,8 @@ import (
 )
 
 type Config struct {
-	IsDebug       *bool `yaml:"is_debug" env:"IS_IS_DEBUG" env-default:"false"  env-required:"true"`
-	IsDevelopment *bool `yaml:"is_development" env:"IS_IS_DEVELOPMENT" env-default:"false" env-required:"true"`
+	IsDebug       bool `yaml:"is_debug" env:"IS_IS_DEBUG" env-default:"false"  env-required:"true"`
+	IsDevelopment bool `yaml:"is_development" env:"IS_IS_DEVELOPMENT" env-default:"false" env-required:"true"`
 	RabbitMQ      struct {
 		Host     string `yaml:"host" env:"IS_RABBIT_HOST" env-required:"true"`
 		Port     string `yaml:"port" env:"IS_RABBIT_PORT" env-required:"true"`

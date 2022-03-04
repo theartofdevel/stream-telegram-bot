@@ -7,8 +7,8 @@ import (
 )
 
 type Config struct {
-	IsDebug       *bool `env:"YTS_IS_DEBUG" env-default:"false"  env-required:"true"`
-	IsDevelopment *bool `env:"YTS_IS_DEVELOPMENT" env-default:"false" env-required:"true"`
+	IsDebug       bool `env:"YTS_IS_DEBUG" env-default:"false"  env-required:"true"`
+	IsDevelopment bool `env:"YTS_IS_DEVELOPMENT" env-default:"false" env-required:"true"`
 	YouTube       struct {
 		APIURL          string `env:"YTS_YT_API_URL" env-required:"true"`
 		RefreshTokenURL string `env:"YTS_YT_RefreshTokenURL" env-required:"true"`
