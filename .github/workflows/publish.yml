@@ -267,13 +267,15 @@ jobs:
     needs: check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2.3.5
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
 
       - name: Deploy RabbitMQ
         uses: dawidd6/action-ansible-playbook@v2.5.0
         with:
-          playbook: rabbitmq.yml
+          playbook: rabbit_mq.yml
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           options: |
             --inventory inventory
