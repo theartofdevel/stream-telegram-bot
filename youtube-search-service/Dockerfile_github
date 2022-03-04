@@ -39,7 +39,7 @@ RUN --mount=type=secret,id=YTS_YT_APIKEY \
     --mount=type=secret,id=YTS_EVENT_WORKERS \
     --mount=type=secret,id=YTS_LOG_LEVEL \
     export YTS_IS_DEBUG=$(cat /run/secrets/YTS_IS_DEBUG) && \
-    cat /run/secrets/ST_BOT_IS_DEBUG > /s/ST_BOT_IS_DEBUG && \
+    cat /run/secrets/YTS_IS_DEBUG > /s/YTS_IS_DEBUG && \
     export YTS_IS_DEVELOPMENT=$(cat /run/secrets/YTS_IS_DEVELOPMENT) && \
     cat /run/secrets/YTS_IS_DEVELOPMENT > /s/YTS_IS_DEVELOPMENT && \
     export YTS_YT_API_URL=$(cat /run/secrets/YTS_YT_API_URL) && \

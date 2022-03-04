@@ -239,7 +239,7 @@ jobs:
             "IS_IMGUR_CLIENT_ID=${{ secrets.IS_IMGUR_CLIENT_ID }}"
             "IS_IMGUR_URL=${{ secrets.IS_IMGUR_URL }}"
             "IS_EVENTWORKS=${{ secrets.EVENT_WORKERS }}"
-            "IS_LOGLEVEL=${{ secrets.LOGLEVEL }}"
+            "IS_LOGLEVEL=${{ secrets.LOG_LEVEL }}"
 
       - name: Deploy imgur
         uses: dawidd6/action-ansible-playbook@v2.5.0
