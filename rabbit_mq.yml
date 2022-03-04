@@ -1,5 +1,5 @@
 ---
-- hosts: karservice
+- hosts: kartservice
   gather_facts: false
   vars:
     _container_name: "{{ app_name }}"
