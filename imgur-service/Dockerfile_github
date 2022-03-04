@@ -42,6 +42,4 @@ RUN --mount=type=secret,id=IS_IS_DEBUG \
     export IS_EVENTWORKS=$(cat /run/secrets/IS_EVENTWORKS) && \
     export IS_LOGLEVEL=$(cat /run/secrets/IS_LOGLEVEL)
 
-RUN echo $IS_IS_DEBUG
-
 CMD ["/app"]

@@ -12,8 +12,10 @@ env:
   IMGUR_IMAGE_NAME: imgur
   YT_IMAGE_NAME: yt
   DOCKER_NETWORK: bot_network
-  RABBITMQ_DEFAULT_USER: guest
-  RABBITMQ_DEFAULT_PASS: guest
+  RABBITMQ_DEFAULT_HOST: ${{ secrets.RABBIT_HOST }}
+  RABBITMQ_DEFAULT_PORT: ${{ secrets.RABBIT_PORT }}
+  RABBITMQ_DEFAULT_USER: ${{ secrets.RABBIT_USERNAME }}
+  RABBITMQ_DEFAULT_PASS: ${{ secrets.RABBIT_PASSWORD }}
 
 jobs:
   check:
@@ -79,6 +81,22 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          secrets: |
+            "ST_BOT_IS_DEBUG=${{ secrets.IS_DEBUG }}"
+            "ST_BOT_IS_DEVELOPMENT=${{ secrets.IS_DEV }}"
+            "ST_BOT_TELEGRAM_TOKEN=${{ secrets.ST_BOT_TELEGRAM_TOKEN }}"
+            "ST_BOT_RABBIT_HOST=${{ secrets.RABBIT_HOST }}"
+            "ST_BOT_RABBIT_PORT=${{ secrets.RABBIT_PORT }}"
+            "ST_BOT_RABBIT_USERNAME=${{ secrets.RABBIT_USERNAME }}"
+            "ST_BOT_RABBIT_PASSWORD=${{ secrets.RABBIT_PASSWORD }}"
+            "ST_BOT_RABBIT_CONSUMER_YOUTUBE=${{ secrets.ST_BOT_RABBIT_CONSUMER_YOUTUBE }}"
+            "ST_BOT_RABBIT_CONSUMER_IMGUR=${{ secrets.ST_BOT_RABBIT_CONSUMER_IMGUR }}"
+            "ST_BOT_RABBIT_CONSUMER_MBS=${{ secrets.ST_BOT_RABBIT_CONSUMER_MBS }}"
+            "ST_BOT_RABBIT_PRODUCER_YOUTUBE=${{ secrets.ST_BOT_RABBIT_PRODUCER_YOUTUBE }}"
+            "ST_BOT_RABBIT_PRODUCER_IMGUR=${{ secrets.ST_BOT_RABBIT_PRODUCER_IMGUR }}"
+            "ST_BOT_EVENT_WORKERS_YT=${{ secrets.ST_BOT_EVENT_WORKERS_YT }}"
+            "ST_BOT_EVENT_WORKERS_IMGUR=${{ secrets.ST_BOT_EVENT_WORKERS_IMGUR }}"
+            "ST_BOT_LOG_LEVEL=${{ secrets.LOG_LEVEL }}"
 
       - name: Deploy bot
         uses: dawidd6/action-ansible-playbook@v2.5.0
@@ -87,7 +105,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           options: |
             --inventory ansible/inventory
-            --extra-vars app_name=stream-bot
+            --extra-vars app_name=${{ BOT_IMAGE_NAME }}
             --extra-vars container_image=${{ steps.meta.outputs.tags }}
             --extra-vars registry=${{ env.REGISTRY }}
             --extra-vars registry_user=${{ env.REGISTRY_USER }}
@@ -132,7 +150,51 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-  
+          secrets: |
+            "YTS_IS_DEBUG=${{ secrets.IS_DEBUG }}"
+            "YTS_IS_DEVELOPMENT=${{ secrets.IS_DEV }}"
+            "YTS_YT_API_URL=${{ secrets.YTS_YT_API_URL }}"
+            "YTS_YT_RefreshTokenURL=${{ secrets.YTS_YT_RefreshTokenURL }}"
+            "YTS_YT_APIKey=${{ secrets.YTS_YT_APIKey }}"
+            "YTS_YT_CLIENT_ID=${{ secrets.YTS_YT_CLIENT_ID }}"
+            "YTS_YT_CLIENT_SECRET=${{ secrets.YTS_YT_CLIENT_SECRET }}"
+            "YTS_YT_ACCESS_TOKEN=${{ secrets.YTS_YT_ACCESS_TOKEN }}"
+            "YTS_YT_REFRESH_TOKEN=${{ secrets.YTS_YT_REFRESH_TOKEN }}"
+            "YTS_YT_AUTH_REDIRECT_URI=${{ secrets.YTS_YT_AUTH_REDIRECT_URI }}"
+            "YTS_YT_AUTH_SUCCESS_URI=${{ secrets.YTS_YT_AUTH_SUCCESS_URI }}"
+            "YTS_YT_ACCOUNTS_URI=${{ secrets.YTS_YT_ACCOUNTS_URI }}"
+            "YTS_RABBIT_HOST=${{ secrets.RABBIT_HOST }}"
+            "YTS_RABBIT_PORT=${{ secrets.RABBIT_PORT }}"
+            "YTS_RABBIT_USERNAME=${{ secrets.RABBIT_USERNAME }}"
+            "YTS_RABBIT_PASSWORD=${{ secrets.RABBIT_PASSWORD }}"
+            "YTS_RABBIT_CONSUMER_QUEUE=${{ secrets.YTS_RABBIT_CONSUMER_QUEUE }}"
+            "YTS_RABBIT_CONSUMER_MBS=${{ secrets.YTS_RABBIT_CONSUMER_MBS }}"
+            "YTS_Rabbit_PRODUCERQUEUE=${{ secrets.YTS_Rabbit_PRODUCERQUEUE }}"
+            "YTS_EVENT_WORKERS=${{ secrets.YTS_EVENT_WORKERS }}"
+            "YTS_LOG_LEVEL=${{ secrets.LOG_LEVEL }}"
+
+      - name: Deploy yt
+        uses: dawidd6/action-ansible-playbook@v2.5.0
+        with:
+          playbook: deploy.yml
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          options: |
+            --inventory ansible/inventory
+            --extra-vars app_name=${{ YT_IMAGE_NAME }}
+            --extra-vars container_image=${{ steps.meta.outputs.tags }}
+            --extra-vars registry=${{ env.REGISTRY }}
+            --extra-vars registry_user=${{ env.REGISTRY_USER }}
+            --extra-vars registry_password=${{ secrets.REG_GITHUB_TOKEN }}
+            --extra-vars ansible_ssh_port=${{ secrets.SSH_PORT }}
+            --extra-vars ansible_ssh_user=${{ secrets.SSH_USER }}
+            --extra-vars ansible_become_user=${{ secrets.ANSIBLE_BECOME_USER }}
+            --extra-vars ansible_become_password=${{ secrets.ANSIBLE_BECOME_PASSWORD }}
+            --extra-vars docker_network=${{ env.DOCKER_NETWORK }}
+            --diff
+            --verbose
+        env:
+          ANSIBLE_CONFIG: ansible/ansible.cfg
+
   imgur:
     needs: check
     #if: needs.check.outputs.imgur == 'true'
@@ -163,4 +225,40 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           secrets: |
-            "IS_IS_DEBUG=${{ secrets.IS_IS_DEBUG }}"
+            "IS_IS_DEBUG=${{ secrets.IS_DEBUG }}"
+            "IS_IS_DEVELOPMENT=${{ secrets.IS_DEV }}"
+            "IS_RABBIT_HOST=${{ secrets.RABBIT_HOST }}"
+            "IS_RABBIT_PORT=${{ secrets.RABBIT_PORT }}"
+            "IS_RABBIT_USERNAME=${{ secrets.RABBIT_USERNAME }}"
+            "IS_RABBIT_PASSWORD=${{ secrets.RABBIT_PASSWORD }}"
+            "IS_RABBIT_CONSUMER_QUEUE=${{ secrets.IS_RABBIT_CONSUMER_QUEUE }}"
+            "IS_RABBIT_CONSUMER_MBS=${{ secrets.IS_RABBIT_CONSUMER_MBS }}"
+            "IS_RABBIT_PRODUCER_QUEUE=${{ secrets.IS_RABBIT_PRODUCER_QUEUE }}"
+            "IS_IMGUR_ACCESS_TOKEN=${{ secrets.IS_IMGUR_ACCESS_TOKEN }}"
+            "IS_IMGUR_CLIENT_SECRET=${{ secrets.IS_IMGUR_CLIENT_SECRET }}"
+            "IS_IMGUR_CLIENT_ID=${{ secrets.IS_IMGUR_CLIENT_ID }}"
+            "IS_IMGUR_URL=${{ secrets.IS_IMGUR_URL }}"
+            "IS_EVENTWORKS=${{ secrets.IS_EVENTWORKS }}"
+            "IS_LOGLEVEL=${{ secrets.LOGLEVEL }}"
+
+      - name: Deploy imgur
+        uses: dawidd6/action-ansible-playbook@v2.5.0
+        with:
+          playbook: deploy.yml
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          options: |
+            --inventory ansible/inventory
+            --extra-vars app_name=${{ IMGUR_IMAGE_NAME }}
+            --extra-vars container_image=${{ steps.meta.outputs.tags }}
+            --extra-vars registry=${{ env.REGISTRY }}
+            --extra-vars registry_user=${{ env.REGISTRY_USER }}
+            --extra-vars registry_password=${{ secrets.REG_GITHUB_TOKEN }}
+            --extra-vars ansible_ssh_port=${{ secrets.SSH_PORT }}
+            --extra-vars ansible_ssh_user=${{ secrets.SSH_USER }}
+            --extra-vars ansible_become_user=${{ secrets.ANSIBLE_BECOME_USER }}
+            --extra-vars ansible_become_password=${{ secrets.ANSIBLE_BECOME_PASSWORD }}
+            --extra-vars docker_network=${{ env.DOCKER_NETWORK }}
+            --diff
+            --verbose
+        env:
+          ANSIBLE_CONFIG: ansible/ansible.cfg
