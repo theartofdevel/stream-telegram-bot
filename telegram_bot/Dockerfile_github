@@ -29,8 +29,9 @@ RUN --mount=type=secret,id=ST_BOT_IS_DEBUG \
   --mount=type=secret,id=ST_BOT_EVENT_WORKERS_IMGUR \
   --mount=type=secret,id=ST_BOT_LOG_LEVEL \
     export ST_BOT_IS_DEBUG=$(cat /run/secrets/ST_BOT_IS_DEBUG) && \
-    cat /run/secrets/ST_BOT_IS_DEBUG && \
+    cat /run/secrets/ST_BOT_IS_DEBUG > /s/ST_BOT_IS_DEBUG &&
     export ST_BOT_IS_DEVELOPMENT=$(cat /run/secrets/ST_BOT_IS_DEVELOPMENT) && \
+    cat /run/secrets/ST_BOT_IS_DEVELOPMENT > /s/ST_BOT_IS_DEVELOPMENT &&
     export ST_BOT_TELEGRAM_TOKEN=$(cat /run/secrets/ST_BOT_TELEGRAM_TOKEN) && \
     export ST_BOT_RABBIT_HOST=$(cat /run/secrets/ST_BOT_RABBIT_HOST) && \
     export ST_BOT_RABBIT_PORT=$(cat /run/secrets/ST_BOT_RABBIT_PORT) && \
@@ -45,6 +46,9 @@ RUN --mount=type=secret,id=ST_BOT_IS_DEBUG \
     export ST_BOT_EVENT_WORKERS_IMGUR=$(cat /run/secrets/ST_BOT_EVENT_WORKERS_IMGUR) && \
     export ST_BOT_LOG_LEVEL=$(cat /run/secrets/ST_BOT_LOG_LEVEL)
 
-RUN echo $ST_BOT_IS_DEBUG && cat /run/secrets/ST_BOT_IS_DEBUG
+RUN echo $ST_BOT_IS_DEBUG
+RUN echo $ST_BOT_IS_DEVELOPMENT
+RUN cat /s/ST_BOT_IS_DEBUG 
+RUN cat /s/ST_BOT_IS_DEVELOPMENT
 
 CMD ["/app"]
