@@ -8,8 +8,8 @@
     - name: "Create network"
       become: true
       community.docker.docker_network:
-        name: "{{ api_docker_network }}"
-        
+        name: "{{ docker_network }}"
+
     - name: "Login to GitHub Container Registry"
       become: true
       community.docker.docker_login:

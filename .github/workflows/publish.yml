@@ -13,7 +13,7 @@ env:
   YT_IMAGE_NAME: yt
   DOCKER_NETWORK: bot_network
   RABBITMQ_DEFAULT_USER: guest
-  RABBITMQ_DEFAULT_PASS: ${}
+  RABBITMQ_DEFAULT_PASS: guest
 
 jobs:
   check:
