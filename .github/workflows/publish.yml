@@ -52,7 +52,7 @@ jobs:
 
   bot:
     needs: check
-    if: needs.check.outputs.bot == 'true'
+    #if: needs.check.outputs.bot == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -105,7 +105,7 @@ jobs:
 
   yt:
     needs: check
-    if: needs.check.outputs.yt == 'true'
+    #if: needs.check.outputs.yt == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -135,7 +135,7 @@ jobs:
   
   imgur:
     needs: check
-    if: needs.check.outputs.imgur == 'true'
+    #if: needs.check.outputs.imgur == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
