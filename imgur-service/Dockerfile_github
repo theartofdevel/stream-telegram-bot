@@ -10,19 +10,38 @@ RUN go build -mod=readonly -o app cmd/main/app.go
 FROM alpine:3.14
 
 COPY --from=builder /usr/local/go/src/app /
-COPY --from=builder /usr/local/go/src/config.yml /
 
-RUN --mount=type=secret,id=YTS_YT_APIKEY \
-  --mount=type=secret,id=YTS_YT_CLIENT_ID \
-  --mount=type=secret,id=YTS_YT_CLIENT_SECRET \
-  --mount=type=secret,id=YTS_YT_ACCESS_TOKEN \
-  --mount=type=secret,id=YTS_YT_REFRESH_TOKEN \
-  --mount=type=secret,id=YTS_RABBIT_PASSWORD \
-   export YTS_YT_API_KEY=$(cat /run/secrets/YTS_YT_API_KEY) && \
-   export YTS_YT_CLIENT_ID=$(cat /run/secrets/YTS_YT_CLIENT_ID) && \
-   export YTS_YT_CLIENT_SECRET=$(cat /run/secrets/YTS_YT_CLIENT_SECRET) && \
-   export YTS_YT_ACCESS_TOKEN=$(cat /run/secrets/YTS_YT_ACCESS_TOKEN) && \
-   export YTS_YT_REFRESH_TOKEN=$(cat /run/secrets/YTS_YT_REFRESH_TOKEN) && \
-   export YTS_RABBIT_PASSWORD=$(cat /run/secrets/YTS_RABBIT_PASSWORD)
+RUN --mount=type=secret,id=IS_IS_DEBUG \
+  --mount=type=secret,id=IS_IS_DEVELOPMENT \
+  --mount=type=secret,id=IS_RABBIT_HOST \
+  --mount=type=secret,id=IS_RABBIT_PORT \
+  --mount=type=secret,id=IS_RABBIT_USERNAME \
+  --mount=type=secret,id=IS_RABBIT_PASSWORD \
+  --mount=type=secret,id=IS_RABBIT_CONSUMER_QUEUE \
+  --mount=type=secret,id=IS_RABBIT_CONSUMER_MBS \
+  --mount=type=secret,id=IS_RABBIT_PRODUCER_QUEUE \
+  --mount=type=secret,id=IS_IMGUR_ACCESS_TOKEN \
+  --mount=type=secret,id=IS_IMGUR_CLIENT_SECRET \
+  --mount=type=secret,id=IS_IMGUR_CLIENT_ID \
+  --mount=type=secret,id=IS_IMGUR_URL \
+  --mount=type=secret,id=IS_EVENTWORKS \
+  --mount=type=secret,id=IS_LOGLEVEL \
+    export IS_IS_DEBUG=$(cat /run/secrets/IS_IS_DEBUG) && \
+    export IS_IS_DEVELOPMENT=$(cat /run/secrets/IS_IS_DEVELOPMENT) && \
+    export IS_RABBIT_HOST=$(cat /run/secrets/IS_RABBIT_HOST) && \
+    export IS_RABBIT_PORT=$(cat /run/secrets/IS_RABBIT_PORT) && \
+    export IS_RABBIT_USERNAME=$(cat /run/secrets/IS_RABBIT_USERNAME) && \
+    export IS_RABBIT_PASSWORD=$(cat /run/secrets/IS_RABBIT_PASSWORD) && \
+    export IS_RABBIT_CONSUMER_QUEUE=$(cat /run/secrets/IS_RABBIT_CONSUMER_QUEUE) && \
+    export IS_RABBIT_CONSUMER_MBS=$(cat /run/secrets/IS_RABBIT_CONSUMER_MBS) && \
+    export IS_RABBIT_PRODUCER_QUEUE=$(cat /run/secrets/IS_RABBIT_PRODUCER_QUEUE) && \
+    export IS_IMGUR_ACCESS_TOKEN=$(cat /run/secrets/IS_IMGUR_ACCESS_TOKEN) && \
+    export IS_IMGUR_CLIENT_SECRET=$(cat /run/secrets/IS_IMGUR_CLIENT_SECRET) && \
+    export IS_IMGUR_CLIENT_ID=$(cat /run/secrets/IS_IMGUR_CLIENT_ID) && \
+    export IS_IMGUR_URL=$(cat /run/secrets/IS_IMGUR_URL) && \
+    export IS_EVENTWORKS=$(cat /run/secrets/IS_EVENTWORKS) && \
+    export IS_LOGLEVEL=$(cat /run/secrets/IS_LOGLEVEL)
+
+RUN echo $IS_IS_DEBUG
 
 CMD ["/app"]

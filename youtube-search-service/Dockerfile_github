@@ -10,19 +10,49 @@ RUN go build -mod=readonly -o app cmd/main/app.go
 FROM alpine:3.14
 
 COPY --from=builder /usr/local/go/src/app /
-COPY --from=builder /usr/local/go/src/config.yml /
 
 RUN --mount=type=secret,id=YTS_YT_APIKEY \
-  --mount=type=secret,id=YTS_YT_CLIENT_ID \
-  --mount=type=secret,id=YTS_YT_CLIENT_SECRET \
-  --mount=type=secret,id=YTS_YT_ACCESS_TOKEN \
-  --mount=type=secret,id=YTS_YT_REFRESH_TOKEN \
-  --mount=type=secret,id=YTS_RABBIT_PASSWORD \
-   export YTS_YT_API_KEY=$(cat /run/secrets/YTS_YT_API_KEY) && \
-   export YTS_YT_CLIENT_ID=$(cat /run/secrets/YTS_YT_CLIENT_ID) && \
-   export YTS_YT_CLIENT_SECRET=$(cat /run/secrets/YTS_YT_CLIENT_SECRET) && \
-   export YTS_YT_ACCESS_TOKEN=$(cat /run/secrets/YTS_YT_ACCESS_TOKEN) && \
-   export YTS_YT_REFRESH_TOKEN=$(cat /run/secrets/YTS_YT_REFRESH_TOKEN) && \
-   export YTS_RABBIT_PASSWORD=$(cat /run/secrets/YTS_RABBIT_PASSWORD)
+    --mount=type=secret,id=YTS_IS_DEBUG \
+    --mount=type=secret,id=YTS_IS_DEVELOPMENT \
+    --mount=type=secret,id=YTS_YT_API_URL \
+    --mount=type=secret,id=YTS_YT_RefreshTokenURL \
+    --mount=type=secret,id=YTS_YT_APIKey \
+    --mount=type=secret,id=YTS_YT_CLIENT_ID \
+    --mount=type=secret,id=YTS_YT_CLIENT_SECRET \
+    --mount=type=secret,id=YTS_YT_ACCESS_TOKEN \
+    --mount=type=secret,id=YTS_YT_REFRESH_TOKEN \
+    --mount=type=secret,id=YTS_YT_AUTH_REDIRECT_URI \
+    --mount=type=secret,id=YTS_YT_AUTH_SUCCESS_URI \
+    --mount=type=secret,id=YTS_YT_ACCOUNTS_URI \
+    --mount=type=secret,id=YTS_RABBIT_HOST \
+    --mount=type=secret,id=YTS_RABBIT_PORT \
+    --mount=type=secret,id=YTS_RABBIT_USERNAME \
+    --mount=type=secret,id=YTS_RABBIT_PASSWORD \
+    --mount=type=secret,id=YTS_RABBIT_CONSUMER_QUEUE \
+    --mount=type=secret,id=YTS_RABBIT_CONSUMER_MBS \
+    --mount=type=secret,id=YTS_Rabbit_PRODUCERQUEUE \
+    --mount=type=secret,id=YTS_EVENT_WORKERS \
+    --mount=type=secret,id=YTS_LOG_LEVEL \
+    export YTS_IS_DEBUG=$(cat /run/secrets/YTS_IS_DEBUG) && \
+    export YTS_IS_DEVELOPMENT=$(cat /run/secrets/YTS_IS_DEVELOPMENT) && \
+    export YTS_YT_API_URL=$(cat /run/secrets/YTS_YT_API_URL) && \
+    export YTS_YT_RefreshTokenURL=$(cat /run/secrets/YTS_YT_RefreshTokenURL) && \
+    export YTS_YT_APIKey=$(cat /run/secrets/YTS_YT_APIKey) && \
+    export YTS_YT_CLIENT_ID=$(cat /run/secrets/YTS_YT_CLIENT_ID) && \
+    export YTS_YT_CLIENT_SECRET=$(cat /run/secrets/YTS_YT_CLIENT_SECRET) && \
+    export YTS_YT_ACCESS_TOKEN=$(cat /run/secrets/YTS_YT_ACCESS_TOKEN) && \
+    export YTS_YT_REFRESH_TOKEN=$(cat /run/secrets/YTS_YT_REFRESH_TOKEN) && \
+    export YTS_YT_AUTH_REDIRECT_URI=$(cat /run/secrets/YTS_YT_AUTH_REDIRECT_URI) && \
+    export YTS_YT_AUTH_SUCCESS_URI=$(cat /run/secrets/YTS_YT_AUTH_SUCCESS_URI) && \
+    export YTS_YT_ACCOUNTS_URI=$(cat /run/secrets/YTS_YT_ACCOUNTS_URI) && \
+    export YTS_RABBIT_HOST=$(cat /run/secrets/YTS_RABBIT_HOST) && \
+    export YTS_RABBIT_PORT=$(cat /run/secrets/YTS_RABBIT_PORT) && \
+    export YTS_RABBIT_USERNAME=$(cat /run/secrets/YTS_RABBIT_USERNAME) && \
+    export YTS_RABBIT_PASSWORD=$(cat /run/secrets/YTS_RABBIT_PASSWORD) && \
+    export YTS_RABBIT_CONSUMER_QUEUE=$(cat /run/secrets/YTS_RABBIT_CONSUMER_QUEUE) && \
+    export YTS_RABBIT_CONSUMER_MBS=$(cat /run/secrets/YTS_RABBIT_CONSUMER_MBS) && \
+    export YTS_Rabbit_PRODUCERQUEUE=$(cat /run/secrets/YTS_Rabbit_PRODUCERQUEUE) && \
+    export YTS_EVENT_WORKERS=$(cat /run/secrets/YTS_EVENT_WORKERS) && \
+    export YTS_LOG_LEVEL=$(cat /run/secrets/YTS_LOG_LEVEL)
 
 CMD ["/app"]

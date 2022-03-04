@@ -7,7 +7,7 @@ import (
 )
 
 type Config struct {
-	IsDebug       *bool `yaml:"is_debug" env:"ST_BOT_ISD_EBUG" env-default:"false"  env-required:"true"`
+	IsDebug       *bool `yaml:"is_debug" env:"ST_BOT_IS_DEBUG" env-default:"false"  env-required:"true"`
 	IsDevelopment *bool `yaml:"is_development" env:"ST_BOT_IS_DEVELOPMENT" env-default:"false" env-required:"true"`
 	Telegram      struct {
 		Token string `yaml:"token" env:"ST_BOT_TELEGRAM_TOKEN" env-required:"true"`
