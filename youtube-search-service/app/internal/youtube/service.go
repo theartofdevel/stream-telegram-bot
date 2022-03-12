@@ -38,7 +38,7 @@ func (s *Service) FindTrackByName(ctx context.Context, trackName string) (string
 		return "", err
 	}
 
-	if response.StatusCode == http.StatusUnauthorized {
+	if response.StatusCode == http.StatusUnauthorized || response.StatusCode == http.StatusForbidden {
 		err := s.UpdateAccessToken(ctx)
 		if err != nil {
 			return "", err
